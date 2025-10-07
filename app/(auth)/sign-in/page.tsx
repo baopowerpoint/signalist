@@ -1,18 +1,16 @@
 "use client";
-import { CountrySelectField } from "@/components/forms/CountrySelectField";
 import FooterLink from "@/components/forms/FooterLink";
 import InputField from "@/components/forms/InputField";
-import SelectField from "@/components/forms/SelectField";
 import { Button } from "@/components/ui/button";
-import {
-  INVESTMENT_GOALS,
-  PREFERRED_INDUSTRIES,
-  RISK_TOLERANCE_OPTIONS,
-} from "@/lib/constants";
+import { signInWithEmail } from "@/lib/actions/auth.actions";
+import { useRouter } from "next/navigation";
+
 import React from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 const SigninPage = () => {
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -28,9 +26,16 @@ const SigninPage = () => {
 
   const onSubmit = async (data: SignInFormData) => {
     try {
-      console.log(data);
+      const result = await signInWithEmail(data);
+      if (result.success) {
+        router.push("/");
+      }
     } catch (error) {
       console.log(error);
+      toast.error("Sign in failed", {
+        description:
+          error instanceof Error ? error.message : "Something went wrong",
+      });
     }
   };
   return (
